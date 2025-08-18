@@ -55,9 +55,14 @@ export class Node {
     this.position = new THREE.Vector3()
     this.position.fromArray(data.position || defaults.position)
     this.quaternion = new THREE.Quaternion()
-    this.quaternion.fromArray(data.quaternion || defaults.quaternion)
-    this.rotation = new THREE.Euler().setFromQuaternion(this.quaternion)
-    this.rotation.reorder('YXZ')
+    this.rotation = new THREE.Euler(0, 0, 0, 'YXZ')
+    if (data.rotation) {
+      this.rotation.fromArray(data.rotation)
+      this.quaternion.setFromEuler(this.rotation)
+    } else if (data.quaternion) {
+      this.quaternion.fromArray(data.quaternion)
+      this.rotation.setFromQuaternion(this.quaternion)
+    }
     this.scale = new THREE.Vector3()
     this.scale.fromArray(data.scale || defaults.scale)
     this.matrix = new THREE.Matrix4()
