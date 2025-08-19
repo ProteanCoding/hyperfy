@@ -232,7 +232,7 @@ export class Prim extends Node {
     }
 
     // Create mesh
-    this.handle = this.ctx.world.stage.insertPrimitive({
+    this.handle = this.ctx.world.stage.insertLinked({
       geometry,
       material,
       castShadow: this._castShadow,
