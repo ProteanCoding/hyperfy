@@ -115,7 +115,7 @@ const materialCache = new Map()
 // Create material with specific properties
 const getMaterial = props => {
   // Create a cache key from material properties
-  const cacheKey = `${props.color}_${props.emissive}_${props.emissiveIntensity}_${props.metalness}_${props.roughness}_${props.opacity}_${props.texture}_${props.doubleside}`
+  const cacheKey = `${props.emissive}_${props.emissiveIntensity}_${props.metalness}_${props.roughness}_${props.opacity}_${props.texture}_${props.doubleside}`
 
   // Check cache first
   if (materialCache.has(cacheKey)) {
@@ -123,7 +123,7 @@ const getMaterial = props => {
   }
 
   const material = new THREE.MeshStandardMaterial({
-    color: props.color,
+    color: 0xffffff,
     emissive: props.emissive,
     emissiveIntensity: props.emissiveIntensity,
     metalness: props.metalness,
@@ -131,6 +131,12 @@ const getMaterial = props => {
     opacity: props.opacity,
     transparent: props.opacity < 1,
     side: props.doubleside ? THREE.DoubleSide : THREE.FrontSide,
+    shadowSide: THREE.BackSide, // fix csm shadow banding
+
+    // fight z-fighting with fire (especially for AI generated objects)
+    polygonOffset: true,
+    polygonOffsetFactor: Math.random(),
+    polygonOffsetUnits: Math.random(),
   })
 
   // Cache the material
@@ -207,39 +213,45 @@ export class Prim extends Node {
     this.scaleOffset.fromArray(scaleOffset)
     this.updateMatrixWorldOffset()
 
-    // Get unit-sized geometry for this type
-    const geometry = getGeometry(this._type, size)
+    // Create visual if visible
+    if (this._opacity > 0) {
+      // Get unit-sized geometry for this type
+      const geometry = getGeometry(this._type, size)
 
-    // Get loader if available (client-side only)
-    const loader = this.ctx.world.loader || null
+      // Get loader if available (client-side only)
+      const loader = this.ctx.world.loader || null
 
-    // Create material with current properties
-    const material = getMaterial({
-      color: this._color,
-      emissive: this._emissive,
-      emissiveIntensity: this._emissiveIntensity,
-      metalness: this._metalness,
-      roughness: this._roughness,
-      opacity: this._opacity,
-      texture: this._texture,
-      doubleside: this._doubleside,
-    })
+      // Create material with current properties
+      const material = getMaterial({
+        // color: this._color,
+        emissive: this._emissive,
+        emissiveIntensity: this._emissiveIntensity,
+        metalness: this._metalness,
+        roughness: this._roughness,
+        opacity: this._opacity,
+        texture: this._texture,
+        doubleside: this._doubleside,
+      })
 
-    if (this._texture && !material._texApplied) {
-      const n = ++this.n
-      await applyTexture(material, this._texture, loader)
-      if (n !== this.n) return // remounted or destroyed
+      if (this._texture && !material._texApplied) {
+        const n = ++this.n
+        await applyTexture(material, this._texture, loader)
+        if (n !== this.n) return // remounted or destroyed
+      }
+
+      // Create mesh
+      this.handle = this.ctx.world.stage.insertLinked({
+        geometry,
+        material,
+        castShadow: this._castShadow,
+        receiveShadow: this._receiveShadow,
+        matrix: this.matrixWorldOffset,
+        // color: this._color,
+        node: this,
+      })
+      // console.log('FOO', this._color)
+      this.handle.setColor(this._color)
     }
-
-    // Create mesh
-    this.handle = this.ctx.world.stage.insertLinked({
-      geometry,
-      material,
-      castShadow: this._castShadow,
-      receiveShadow: this._receiveShadow,
-      matrix: this.matrixWorldOffset,
-      node: this,
-    })
 
     // Create physics if enabled
     if (this._physics && !this.ctx.moving) {
