@@ -74,7 +74,7 @@ const getGeometry = (type, size) => {
       case 'sphere':
         {
           const [radius] = size
-          geometry = new THREE.SphereGeometry(radius, 16, 12)
+          geometry = new THREE.SphereGeometry(radius, 20, 12)
         }
         break
       case 'cylinder':
