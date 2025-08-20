@@ -10,7 +10,7 @@ const prefix = `
 app.remove(app.get('Block'))
 `
 
-const docs = fs.readFileSync(path.join(__dirname, '../ai-docs.txt'), 'utf8')
+const docs = fs.readFileSync(path.join(__dirname, 'public/ai-docs.txt'), 'utf8')
 
 /**
  * AI System
