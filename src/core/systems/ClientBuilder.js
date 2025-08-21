@@ -75,6 +75,13 @@ export class ClientBuilder extends System {
         return true // capture
       }
     }
+    this.control.backquote.onPress = () => {
+      if (this.control.pointer.locked) {
+        this.control.pointer.unlock()
+      } else {
+        this.control.pointer.lock()
+      }
+    }
     this.updateActions()
   }
 
