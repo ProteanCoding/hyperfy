@@ -533,10 +533,8 @@ export class Prim extends Node {
     }
     if (this._type === value) return
     this._type = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get size() {
@@ -552,10 +550,8 @@ export class Prim extends Node {
     }
     if (isEqual(this._size, value)) return
     this._size = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get color() {
@@ -568,10 +564,7 @@ export class Prim extends Node {
     }
     if (this._color === value) return
     this._color = value
-    if (this.handle) {
-      this.handle.setColor(value)
-      // no rebuild needed!
-    }
+    this.handle?.setColor(value) // no rebuild needed!
   }
 
   get emissive() {
@@ -584,10 +577,7 @@ export class Prim extends Node {
     }
     if (this._emissive === value) return
     this._emissive = value
-    if (this.handle) {
-      this.handle.setEmissive(value)
-      // no rebuild needed!
-    }
+    this.handle?.setEmissive(value) // no rebuild needed!
   }
 
   get castShadow() {
@@ -600,10 +590,8 @@ export class Prim extends Node {
     }
     if (this._castShadow === value) return
     this._castShadow = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get receiveShadow() {
@@ -616,10 +604,8 @@ export class Prim extends Node {
     }
     if (this._receiveShadow === value) return
     this._receiveShadow = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get emissiveIntensity() {
@@ -632,10 +618,7 @@ export class Prim extends Node {
     }
     if (this._emissiveIntensity === value) return
     this._emissiveIntensity = value
-    if (this.handle) {
-      this.handle.setEmissiveIntensity(value)
-      // no rebuild needed!
-    }
+    this.handle?.setEmissiveIntensity(value) // no rebuild needed!
   }
 
   get metalness() {
@@ -648,10 +631,8 @@ export class Prim extends Node {
     }
     if (this._metalness === value) return
     this._metalness = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get roughness() {
@@ -664,10 +645,8 @@ export class Prim extends Node {
     }
     if (this._roughness === value) return
     this._roughness = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get opacity() {
@@ -680,10 +659,8 @@ export class Prim extends Node {
     }
     if (this._opacity === value) return
     this._opacity = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get texture() {
@@ -696,10 +673,8 @@ export class Prim extends Node {
     }
     if (this._texture === value) return
     this._texture = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get physics() {
@@ -712,10 +687,8 @@ export class Prim extends Node {
     }
     if (this._physics === value) return
     this._physics = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get mass() {
@@ -728,10 +701,8 @@ export class Prim extends Node {
     }
     if (this._mass === value) return
     this._mass = value
-    if (this.handle && this._physics) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get linearDamping() {
@@ -744,10 +715,8 @@ export class Prim extends Node {
     }
     if (this._linearDamping === value) return
     this._linearDamping = value
-    if (this.handle && this._physics) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get angularDamping() {
@@ -760,10 +729,8 @@ export class Prim extends Node {
     }
     if (this._angularDamping === value) return
     this._angularDamping = value
-    if (this.handle && this._physics) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get staticFriction() {
@@ -776,10 +743,8 @@ export class Prim extends Node {
     }
     if (this._staticFriction === value) return
     this._staticFriction = value
-    if (this.handle && this._physics) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get dynamicFriction() {
@@ -792,10 +757,8 @@ export class Prim extends Node {
     }
     if (this._dynamicFriction === value) return
     this._dynamicFriction = value
-    if (this.handle && this._physics) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get restitution() {
@@ -808,10 +771,8 @@ export class Prim extends Node {
     }
     if (this._restitution === value) return
     this._restitution = value
-    if (this.handle && this._physics) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get layer() {
@@ -824,10 +785,8 @@ export class Prim extends Node {
     }
     if (this._layer === value) return
     this._layer = value
-    if (this.handle && this._physics) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get trigger() {
@@ -840,10 +799,8 @@ export class Prim extends Node {
     }
     if (this._trigger === value) return
     this._trigger = value
-    if (this.handle && this._physics) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   get tag() {
@@ -917,10 +874,8 @@ export class Prim extends Node {
     }
     if (this._doubleside === value) return
     this._doubleside = value
-    if (this.handle) {
-      this.needsRebuild = true
-      this.setDirty()
-    }
+    this.needsRebuild = true
+    this.setDirty()
   }
 
   getProxy() {
