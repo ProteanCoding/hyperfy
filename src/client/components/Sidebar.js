@@ -721,7 +721,7 @@ function World({ world, hidden }) {
             world={world}
           />
           <FieldFile
-            label='Avatar'
+            label='Default Avatar'
             hint='Change the default avatar everyone spawns into the world with'
             kind='avatar'
             value={avatar}
