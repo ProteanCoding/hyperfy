@@ -21,6 +21,11 @@ const Modes = {
   CRASHED: 'crashed',
 }
 
+let safeMode = false
+if (typeof window !== 'undefined') {
+  safeMode = new URLSearchParams(window.location.search).get('safemode')
+}
+
 export class App extends Entity {
   constructor(world, data, local) {
     super(world, data, local)
@@ -121,7 +126,10 @@ export class App extends Entity {
     this.root.activate({ world: this.world, entity: this, moving: !!this.data.mover })
     // execute script
     const runScript =
-      script && !crashed && (this.mode === Modes.ACTIVE || (this.mode === Modes.MOVING && !this.resetOnMove))
+      script &&
+      !crashed &&
+      !safeMode &&
+      (this.mode === Modes.ACTIVE || (this.mode === Modes.MOVING && !this.resetOnMove))
     // (this.mode === Modes.ACTIVE && script && !crashed) ||
     // (this.mode === Modes.MOVING && !this.resetOnMove && !this.scriptError)
     if (runScript) {
