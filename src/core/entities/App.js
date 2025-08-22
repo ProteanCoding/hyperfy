@@ -127,6 +127,7 @@ export class App extends Entity {
     if (runScript) {
       this.abortController = new AbortController()
       this.script = script
+      this.onScript?.(script)
       try {
         this.script.exec(this.getWorldProxy(), this.getAppProxy(), this.fetch, blueprint.props, this.setTimeout)
         this.scriptError = null
