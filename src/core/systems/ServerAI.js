@@ -6,8 +6,7 @@ import { OpenAI } from 'openai'
 import { System } from './System'
 import { hashFile } from '../utils-server'
 
-const prefix = `
-app.remove(app.get('Block'))
+const prefix = `app.remove(app.get('Block'))
 `
 
 const docs = fs.readFileSync(path.join(__dirname, 'public/ai-docs.md'), 'utf8')
@@ -74,9 +73,10 @@ export class ServerAI extends System {
     // send prompt to ai to generate code
     const startAt = performance.now()
     const output = await this.client.create(prompt)
-    const code = prefix + output
+    const changelog = [`create: ${prompt}`]
+    const code = prefix + writeChangelog(output, changelog)
     const elapsed = (performance.now() - startAt) / 1000
-    console.log(code)
+    // console.log(code)
     console.log(`[ai] created in ${elapsed}s`)
     // convert new code to asset
     const file = new File([code], 'script.js', { type: 'text/plain' })
@@ -107,8 +107,10 @@ export class ServerAI extends System {
     // send prompt to ai to generate code
     const startAt = performance.now()
     const code = script.code.replace(prefix, '')
+    const changelog = readChangelog(code)
+    changelog.push(`edit: ${prompt}`)
     const output = await this.client.edit(code, prompt)
-    const newCode = prefix + output
+    const newCode = prefix + writeChangelog(output, changelog)
     const elapsed = (performance.now() - startAt) / 1000
     console.log(`[ai] edited in ${elapsed}s`)
     // convert new code to asset
@@ -140,8 +142,9 @@ export class ServerAI extends System {
     // send prompt to ai to generate code
     const startAt = performance.now()
     const code = script.code.replace(prefix, '')
+    const changelog = readChangelog(code)
     const output = await this.client.fix(code, error)
-    const newCode = prefix + output
+    const newCode = prefix + writeChangelog(output, changelog)
     const elapsed = (performance.now() - startAt) / 1000
     console.log(`[ai] fixed in ${elapsed}s`)
     // convert new code to asset
@@ -552,4 +555,32 @@ class XAIClient {
     const data = await resp.json()
     return data.choices[0].message.content
   }
+}
+
+const changelogRegex = /\/\*\*[\s\S]*?changelog:[\s\S]*?\*\/\s*/
+const entryRegex = /\*\s*-\s*(.+)/g
+
+function readChangelog(code) {
+  // match changelog comment block
+  const match = code.match(changelogRegex)
+  if (!match) return []
+  const changelogBlock = match[0]
+  // extract individual entries (lines starting with * -)
+  const entries = []
+  let entryMatch
+  while ((entryMatch = entryRegex.exec(changelogBlock)) !== null) {
+    entries.push(entryMatch[1].trim())
+  }
+  return entries
+}
+
+function writeChangelog(code, changelog) {
+  // remove existing changelog header if exists
+  const changelogRegex = /\/\*\*[\s\S]*?changelog:[\s\S]*?\*\/\s*/
+  const cleanCode = code.replace(changelogRegex, '')
+  // construct new changelog header
+  const entries = changelog.map(entry => ` * - ${entry}`).join('\n')
+  const header = `/**\n * changelog:\n${entries}\n */\n\n`
+  // insert new header at beginning
+  return header + cleanCode.trimStart()
 }
