@@ -125,6 +125,8 @@ export class App extends Entity {
     // activate
     this.root.activate({ world: this.world, entity: this, moving: !!this.data.mover })
     // execute script
+    this.script = script
+    this.onScript?.(script)
     const runScript =
       script &&
       !crashed &&
@@ -134,8 +136,6 @@ export class App extends Entity {
     // (this.mode === Modes.MOVING && !this.resetOnMove && !this.scriptError)
     if (runScript) {
       this.abortController = new AbortController()
-      this.script = script
-      this.onScript?.(script)
       try {
         this.script.exec(this.getWorldProxy(), this.getAppProxy(), this.fetch, blueprint.props, this.setTimeout)
         this.scriptError = null
