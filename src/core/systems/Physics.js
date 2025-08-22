@@ -358,12 +358,13 @@ export class Physics extends System {
           return
         }
         matrix.toPxTransform(this.transform)
-        const isKinematic = actor.getRigidBodyFlags?.().isSet(PHYSX.PxRigidBodyFlagEnum.eKINEMATIC)
-        if (isKinematic) {
-          actor.setKinematicTarget(this.transform)
-        } else {
-          actor.setGlobalPose(this.transform)
-        }
+        // const isKinematic = actor.getRigidBodyFlags?.().isSet(PHYSX.PxRigidBodyFlagEnum.eKINEMATIC)
+        // if (isKinematic) {
+        //   actor.setKinematicTarget(this.transform)
+        // } else {
+        //   actor.setGlobalPose(this.transform)
+        // }
+        actor.setGlobalPose(this.transform)
       },
       snap: pose => {
         actor.setGlobalPose(pose)
