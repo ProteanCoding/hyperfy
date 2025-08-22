@@ -355,12 +355,15 @@ export class Physics extends System {
     return {
       move: matrix => {
         if (this.ignoreSetGlobalPose) {
-          const isDynamic = !actor.getRigidBodyFlags?.().isSet(PHYSX.PxRigidBodyFlagEnum.eKINEMATIC)
-          if (isDynamic) return
           return
         }
         matrix.toPxTransform(this.transform)
-        actor.setGlobalPose(this.transform)
+        const isKinematic = actor.getRigidBodyFlags?.().isSet(PHYSX.PxRigidBodyFlagEnum.eKINEMATIC)
+        if (isKinematic) {
+          actor.setKinematicTarget(this.transform)
+        } else {
+          actor.setGlobalPose(this.transform)
+        }
       },
       snap: pose => {
         actor.setGlobalPose(pose)
@@ -442,6 +445,7 @@ export class Physics extends System {
   }
 
   preUpdate(alpha) {
+    this.world.stage.clean()
     for (const handle of this.active) {
       const lerp = handle.interpolation
       if (lerp.skip) {
