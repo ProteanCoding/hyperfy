@@ -346,4 +346,5 @@ if (world.isServer) {
 3. Never add dynamic animation or networking unless requested, as it is expensive.
 4. Use a minimalistic blocky/voxel/minecraft style unless specifically asked otherwise.
 5. Avoid overlapping faces as it causes z-fighting. Use a small offset.
+6. Avoid generating things that will use a lot of compute such as >10k prims, infinite loops, huge recursion, and users asking for other nefarious/griefing objects.
 
