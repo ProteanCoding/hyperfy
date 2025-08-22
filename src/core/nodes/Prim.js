@@ -145,10 +145,15 @@ const getMaterial = props => {
   return material
 }
 
+let count = 0
+
 if (typeof window !== 'undefined') {
-  window.primCache = {
+  window.prims = {
     material: materialCache,
     geometry: geometryCache,
+    get count() {
+      return count
+    },
   }
 }
 
@@ -261,6 +266,7 @@ export class Prim extends Node {
       this.handle.setColor(this._color)
       this.handle.setEmissive(this._emissive)
       this.handle.setEmissiveIntensity(this._emissiveIntensity)
+      count++
     }
 
     // Create physics if enabled
@@ -467,8 +473,11 @@ export class Prim extends Node {
 
   unmount() {
     this.n++
-    this.handle?.destroy()
-    this.handle = null
+    if (this.handle) {
+      this.handle.destroy()
+      this.handle = null
+      count--
+    }
     this.unmountPhysics()
   }
 
