@@ -136,8 +136,6 @@ export class App extends Entity {
         console.error(err)
         return this.crash()
       }
-    } else {
-      this.script = null
     }
     // if moving we need updates
     if (this.mode === Modes.MOVING) {
@@ -203,6 +201,7 @@ export class App extends Entity {
       try {
         this.emit('fixedUpdate', delta)
       } catch (err) {
+        this.scriptError = serializeError(err)
         console.error('script fixedUpdate crashed', this)
         console.error(err)
         this.crash()
@@ -223,6 +222,7 @@ export class App extends Entity {
       try {
         this.emit('update', delta)
       } catch (err) {
+        this.scriptError = serializeError(err)
         console.error('script update() crashed', this)
         console.error(err)
         this.crash()
@@ -236,6 +236,7 @@ export class App extends Entity {
       try {
         this.emit('lateUpdate', delta)
       } catch (err) {
+        this.scriptError = serializeError(err)
         console.error('script lateUpdate() crashed', this)
         console.error(err)
         this.crash()
