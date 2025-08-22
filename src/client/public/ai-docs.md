@@ -50,7 +50,7 @@ const sphere = app.create('prim', {
 
 const cylinder = app.create('prim', {
   type: 'cylinder',
-  size: [0.5, 0.5, 1], // radiusTop, radiusBtm, height
+  size: [0.5, 0.5, 1], // topRadius, bottomRadius, height
   color: '#0000ff' // blue
 })
 ```
@@ -343,6 +343,7 @@ if (world.isServer) {
 
 1. Objects should match real world dimensions
 2. Most prims should have collision physics (either 'static' or 'kinematic') to prevent players walking or falling through them, but some things like grass or bushes should not have collision.
-3. Never add dynamic animation unless requested, as it is expensive.
+3. Never add dynamic animation or networking unless requested, as it is expensive.
 4. Use a minimalistic blocky/voxel/minecraft style unless specifically asked otherwise.
+5. Avoid overlapping faces as it causes z-fighting. Use a small offset.
 

@@ -10,7 +10,7 @@ const prefix = `
 app.remove(app.get('Block'))
 `
 
-const docs = fs.readFileSync(path.join(__dirname, 'public/ai-docs.txt'), 'utf8')
+const docs = fs.readFileSync(path.join(__dirname, 'public/ai-docs.md'), 'utf8')
 
 /**
  * AI System
@@ -33,6 +33,9 @@ export class ServerAI extends System {
       }
       if (this.provider === 'anthropic') {
         this.client = new AnthropicClient(this.apiKey, this.model)
+      }
+      if (this.provider === 'xai') {
+        this.client = new XAIClient(this.apiKey, this.model)
       }
     }
     this.enabled = !!this.client
@@ -421,5 +424,132 @@ class Comput3Client {
         },
       ],
     })
+  }
+}
+
+class XAIClient {
+  constructor(apiKey, model) {
+    this.apiKey = apiKey
+    this.model = model
+    this.url = 'https://api.x.ai/v1/chat/completions'
+  }
+
+  async create(prompt) {
+    const resp = await fetch(this.url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: this.model,
+        stream: false,
+        messages: [
+          {
+            role: 'system',
+            content: `
+              ${docs}
+              ===============
+              You are an artist and code generator. Always respond with raw code only, never use markdown code blocks or any other formatting.`,
+          },
+          {
+            role: 'user',
+            content: `Respond with the javascript needed to generate the following:\n\n"${prompt}"`,
+          },
+        ],
+      }),
+    })
+    const data = await resp.json()
+    return data.choices[0].message.content
+  }
+
+  async edit(code, prompt) {
+    const resp = await fetch(this.url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: this.model,
+        stream: false,
+        messages: [
+          {
+            role: 'system',
+            content: `
+              ${docs}
+              ===============
+              You are an artist and code generator. Always respond with raw code only, never use markdown code blocks or any other formatting.
+              Here is the existing script that you will be working with:
+              ===============
+              ${code}`,
+          },
+          {
+            role: 'user',
+            content: `Please edit the code above to satisfy the following request:\n\n"${prompt}"`,
+          },
+        ],
+      }),
+    })
+    const data = await resp.json()
+    return data.choices[0].message.content
+  }
+
+  async fix(code, error) {
+    const resp = await fetch(this.url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: this.model,
+        stream: false,
+        messages: [
+          {
+            role: 'system',
+            content: `
+              ${docs}
+              ===============
+              You are an artist and code generator. Always respond with raw code only, never use markdown code blocks or any other formatting.
+              Here is the existing script that you will be working with:
+              ===============
+              ${code}`,
+          },
+          {
+            role: 'user',
+            content: `This code has an error please fix it:\n\n"${JSON.stringify(error, null, 2)}"`,
+          },
+        ],
+      }),
+    })
+    const data = await resp.json()
+    return data.choices[0].message.content
+  }
+
+  async classify(prompt) {
+    const resp = await fetch(this.url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: this.model,
+        stream: false,
+        messages: [
+          {
+            role: 'system',
+            content: `You are a classifier. We will give you a prompt that a user has entered to generate a 3D object and your job is respond with a short name for the object. For example if someone prompts "a cool gamer desk with neon lights" you would respond with something like "Gamer Desk" because it is a short descriptive name that captures the essence of the object.`,
+          },
+          {
+            role: 'user',
+            content: `Please classify the following prompt:\n\n"${prompt}"`,
+          },
+        ],
+      }),
+    })
+    const data = await resp.json()
+    return data.choices[0].message.content
   }
 }
