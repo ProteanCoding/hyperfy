@@ -45,7 +45,10 @@ export class ClientAI extends System {
       desc: null,
       model: 'asset://ai.glb',
       script: 'asset://ai.js',
-      props: {},
+      props: {
+        prompt: prompt.length > 100 ? prompt.slice(0, 100) + '...' : prompt,
+        createdAt: this.world.network.getTime(),
+      },
       preload: false,
       public: false,
       locked: false,
