@@ -72,7 +72,8 @@ export class ServerAI extends System {
     this.classify({ blueprintId, prompt })
     // send prompt to ai to generate code
     const startAt = performance.now()
-    const output = await this.client.create(prompt)
+    let output = await this.client.create(prompt)
+    output = stripCodeFences(output)
     const changelog = [`create: ${prompt}`]
     const code = prefix + writeChangelog(output, changelog)
     const elapsed = (performance.now() - startAt) / 1000
@@ -109,7 +110,8 @@ export class ServerAI extends System {
     const code = script.code.replace(prefix, '')
     const changelog = readChangelog(code)
     changelog.push(`edit: ${prompt}`)
-    const output = await this.client.edit(code, prompt)
+    let output = await this.client.edit(code, prompt)
+    output = stripCodeFences(output)
     const newCode = prefix + writeChangelog(output, changelog)
     const elapsed = (performance.now() - startAt) / 1000
     console.log(`[ai] edited in ${elapsed}s`)
@@ -143,7 +145,8 @@ export class ServerAI extends System {
     const startAt = performance.now()
     const code = script.code.replace(prefix, '')
     const changelog = readChangelog(code)
-    const output = await this.client.fix(code, error)
+    let output = await this.client.fix(code, error)
+    output = stripCodeFences(output)
     const newCode = prefix + writeChangelog(output, changelog)
     const elapsed = (performance.now() - startAt) / 1000
     console.log(`[ai] fixed in ${elapsed}s`)
@@ -583,4 +586,17 @@ function writeChangelog(code, changelog) {
   const header = `/**\n * changelog:\n${entries}\n */\n\n`
   // insert new header at beginning
   return header + cleanCode.trimStart()
+}
+
+const fencePattern = /^```(?:\w+)?\s*([\s\S]*?)\s*```$/
+function stripCodeFences(text) {
+  // sometimes AI responses come back wrapped in code backticks even though
+  // we ask it not to. this strips them out if they exist.
+  let cleaned = text.trim()
+  // regex to match ```js ... ``` or ``` ... ```
+  const match = cleaned.match(fencePattern)
+  if (match) {
+    return match[1] // extract inner code
+  }
+  return cleaned // return untouched if no fences
 }
