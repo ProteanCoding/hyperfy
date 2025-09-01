@@ -236,7 +236,7 @@ const box = app.create('prim', {
   size: [1, 1, 1],
   color: 'red',
   emissive: 'red', // usually the same as `color`
-  emissiveIntensity: 5, // 0 is no bloom, ~5 is a nice bloom, 10 is mega bloom
+  emissiveIntensity: 5, // 0 is no bloom, ~5 is a nice bloom, 10 is mega bloom (MUST be >= 0)
 })
 ```
 
