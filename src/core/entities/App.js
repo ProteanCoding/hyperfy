@@ -12,7 +12,7 @@ import { Layers } from '../extras/Layers'
 import { createPlayerProxy } from '../extras/createPlayerProxy'
 import { serializeError } from '../extras/serializeError'
 
-const hotEventNames = ['fixedUpdate', 'update', 'lateUpdate']
+const hotEventNames = ['fixedUpdate', 'update', 'animate', 'lateUpdate']
 
 const Modes = {
   ACTIVE: 'active',
@@ -42,6 +42,8 @@ export class App extends Entity {
     this.target = null
     this.projectLimit = Infinity
     this.resetOnMove = false
+    this.animateDelta = 0
+    this.animateRate = 0.001
     this.playerProxies = new Map()
     this.hitResultsPool = []
     this.hitResults = []
@@ -226,10 +228,17 @@ export class App extends Entity {
       this.networkQuat.update(delta)
       this.networkSca.update(delta)
     }
-    // script update()
+    // script update/animate
     if (this.script) {
       try {
+        // update
         this.emit('update', delta)
+        // animate
+        this.animateDelta += delta
+        while (this.animateDelta >= this.animateRate) {
+          this.emit('animate', this.animateDelta)
+          this.animateDelta = 0
+        }
       } catch (err) {
         this.scriptError = serializeError(err)
         console.error('script update() crashed', this)

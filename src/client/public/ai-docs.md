@@ -202,26 +202,28 @@ const box = app.create('prim', {
 
 ## Animation
 
-Only when requested, you can make things move or change over time by hooking into the update cycle:
+Only when requested, you can make things move or change over time by hooking into the animation cycle:
 
 ```jsx
-app.on('update', delta => {
+app.on('animate', delta => {
   box.rotation.y += 45 * DEG2RAD * delta // rotate around Y axis each frame 45 degrees per second
 })
 ```
 
-If something needs to happen in response to interaction (eg triggers or actions), subscribe and unsubscribe only as needed for performance:
+The `animate` rate is dynamic based on how far away the app is from the camera, so be sure to use `delta` time to normalize speeds.
+
+If animations start in response to triggers or actions and have an end time, subscribe and unsubscribe for performance:
 
 ```jsx
-const update = delta => {
+const animate = delta => {
   // do things
 }
 
 // subscribe when something needs to happen
-app.on('update', update)
+app.on('animate', animate)
 
-// unsubscribe when idle to save resources
-app.off('update', update)
+// unsubscribe when finsihed to save resources
+app.off('animate', animate)
 ```
 
 ## Bloom
