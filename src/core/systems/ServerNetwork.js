@@ -213,7 +213,7 @@ export class ServerNetwork extends System {
       if (isNumber(playerLimit) && playerLimit > 0 && this.sockets.size >= playerLimit) {
         const packet = writePacket('kick', 'player_limit')
         ws.send(packet)
-        ws.disconnect()
+        ws.close()
         return
       }
 
@@ -248,7 +248,7 @@ export class ServerNetwork extends System {
       if (this.sockets.has(user.id)) {
         const packet = writePacket('kick', 'duplicate_user')
         ws.send(packet)
-        ws.disconnect()
+        ws.close()
         return
       }
 
