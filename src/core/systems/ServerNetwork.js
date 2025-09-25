@@ -9,7 +9,7 @@ import * as THREE from '../extras/three'
 import { Ranks } from '../extras/ranks'
 
 const SAVE_INTERVAL = parseInt(process.env.SAVE_INTERVAL || '60') // seconds
-const PING_RATE = 1 // seconds
+const PING_RATE = 10 // seconds
 const defaultSpawn = '{ "position": [0, 0, 0], "quaternion": [0, 0, 0, 1] }'
 
 const HEALTH_MAX = 100
