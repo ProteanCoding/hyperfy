@@ -268,6 +268,9 @@ export class Apps extends System {
       isMoving(entity) {
         return entity.mode === 'moving'
       },
+      three(entity) {
+        return THREE
+      }
     }
     this.appSetters = {
       state(entity, value) {
