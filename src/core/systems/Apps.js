@@ -7,6 +7,7 @@ import { getRef } from '../nodes/Node'
 import { Layers } from '../extras/Layers'
 import { ControlPriorities } from '../extras/ControlPriorities'
 import { warn } from '../extras/warn'
+import { ThreeProxy } from '../extras/ThreeProxy'
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -264,6 +265,9 @@ export class Apps extends System {
       },
       keepActive(entity) {
         return entity.keepActive
+      },
+      three(entity) {
+        return ThreeProxy
       },
     }
     this.appSetters = {
