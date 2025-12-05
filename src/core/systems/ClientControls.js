@@ -85,6 +85,9 @@ export class ClientControls extends System {
       delta: 0,
     }
     this.xrSession = null
+
+    this.pointerLockOccurred = false
+    document.addEventListener('pointerlockchange', () => this.pointerLockOccurred = true, { once: true })
   }
 
   start() {
@@ -546,6 +549,15 @@ export class ClientControls extends System {
           button.onRelease?.()
         }
       }
+    }
+  }
+
+  onInitialPointerLock(callback) {
+    if (this.pointerLockOccurred) {
+      callback.call()
+
+    } else {
+      document.addEventListener('pointerlockchange', callback, { once: true })
     }
   }
 
