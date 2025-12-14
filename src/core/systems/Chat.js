@@ -70,6 +70,10 @@ export class Chat extends System {
       this.world.network.cb2.call()
       return
     }
+    if (args[0] === 'fly') {
+      this.world.flying = !this.world.flying
+      return
+    }
 
     if (cmd !== 'admin') {
       this.world.events.emit('command', { playerId, cmd, value, args })
