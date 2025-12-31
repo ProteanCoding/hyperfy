@@ -86,8 +86,8 @@ export class ClientControls extends System {
     }
     this.xrSession = null
 
-    this.pointerLockOccurred = false
-    document.addEventListener('pointerlockchange', () => this.pointerLockOccurred = true, { once: true })
+    this.pointerInteractionOccurred = false
+    document.addEventListener('pointerdown', () => this.pointerInteractionOccurred = true, { once: true })
   }
 
   start() {
@@ -552,12 +552,12 @@ export class ClientControls extends System {
     }
   }
 
-  onInitialPointerLock(callback) {
-    if (this.pointerLockOccurred) {
+  onInitialPointerInteraction(callback) {
+    if (this.pointerInteractionOccurred) {
       callback.call()
 
     } else {
-      document.addEventListener('pointerlockchange', callback, { once: true })
+      document.addEventListener('pointerdown', callback, { once: true })
     }
   }
 
